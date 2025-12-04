@@ -69,10 +69,10 @@ GradientLayer::onInitialize()
 {
   auto node = node_.lock(); 
   declareParameter("enabled", rclcpp::ParameterValue(true));
-  node->get_parameter(name_ + "." + "enabled", enabled_);
+  node->get_parameter(name_ + "." + "enabled", enabled_); // 
 
   need_recalculation_ = false;
-  current_ = true;
+  current_ = true; // 
 }
 
 // The method is called to ask the plugin: which area of costmap it needs to update.
@@ -88,9 +88,6 @@ GradientLayer::updateBounds(
     last_min_y_ = *min_y;
     last_max_x_ = *max_x;
     last_max_y_ = *max_y;
-    // For some reason when I make these -<double>::max() it does not
-    // work with Costmap2D::worldToMapEnforceBounds(), so I'm using
-    // -<float>::max() instead.
     *min_x = -std::numeric_limits<float>::max();
     *min_y = -std::numeric_limits<float>::max();
     *max_x = std::numeric_limits<float>::max();
@@ -112,8 +109,6 @@ GradientLayer::updateBounds(
   }
 }
 
-// The method is called when footprint was changed.
-// Here it just resets need_recalculation_ variable.
 void
 GradientLayer::onFootprintChanged()
 {
@@ -172,6 +167,13 @@ GradientLayer::updateCosts(
     for (int i = min_i; i < max_i; i++) {
       int index = master_grid.getIndex(i, j);
       // setting the gradient cost
+			// 梯度代价计算：
+			// 1. 从LETHAL_OBSTACLE（254）开始，逐渐减小成本值，形成梯度效果
+			// 2. 衰减步长由GRADIENT_FACTOR控制，每次递增gradient_index时，成本值减少GRADIENT_FACTOR
+			// 3. 当gradient_index超过GRADIENT_SIZE时，成本值重置为LETHAL_OBSTACLE，重新开始梯度计算
+			// 4. 通过%255确保成本值在0-254范围内循环
+			// 个人理解：梯度层应该根据障碍物的位置来计算的，此处对设置范围内的所有栅格都计算了一遍梯度成本，
+			// 这样导致的结果就像一个平面上有一系列平行的梯度条纹，而不是围绕障碍物形成的梯度。
       unsigned char cost = (LETHAL_OBSTACLE - gradient_index*GRADIENT_FACTOR)%255;
       if (gradient_index <= GRADIENT_SIZE) {
         gradient_index++;

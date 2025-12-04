@@ -61,6 +61,14 @@ public:
     double * min_y,
     double * max_x,
     double * max_y);
+	/**
+	 * @brief 更新成本地图层，在指定的窗口范围内生成梯度成本
+	 * @param master_grid 主成本地图
+	 * @param min_i 窗口的最小i索引
+	 * @param min_j 窗口的最小j索引
+	 * @param max_i 窗口的最大i索引
+	 * @param max_j 窗口的最大j索引
+	 */
   virtual void updateCosts(
     nav2_costmap_2d::Costmap2D & master_grid,
     int min_i, int min_j, int max_i, int max_j);
@@ -70,6 +78,7 @@ public:
     return;
   }
 
+	// 当机器人足迹发生变化时调用此方法，并且地图层需要重新计算
   virtual void onFootprintChanged();
 
   virtual bool isClearable() {return false;}
@@ -78,12 +87,10 @@ private:
   double last_min_x_, last_min_y_, last_max_x_, last_max_y_;
 
   // Indicates that the entire gradient should be recalculated next time.
-  bool need_recalculation_;
+  bool need_recalculation_; // 是否需要重新计算梯度地图层，当机器人足迹发生变化时设置为true
 
-  // Size of gradient in cells
-  int GRADIENT_SIZE = 20;
-  // Step of increasing cost per one cell in gradient
-  int GRADIENT_FACTOR = 10;
+  int GRADIENT_SIZE = 20; // 梯度影响范围：梯度地图层的大小，单位为栅格数
+  int GRADIENT_FACTOR = 10; // 衰减地图因子：梯度地图层中每个栅格的成本增加步长
 };
 
 }  // namespace nav2_gradient_costmap_plugin

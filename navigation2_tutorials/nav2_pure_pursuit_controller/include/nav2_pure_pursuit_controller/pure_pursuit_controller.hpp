@@ -45,8 +45,15 @@ public:
   void setPlan(const nav_msgs::msg::Path & path) override;
 
 protected:
+	/**
+	 * @brief 
+	 * 1. 将全局路径在局部地图范围内裁减，并根据当前位置对裁剪路径点作tf转化
+	 * 2. 将距离当前位置最近的全局路径点之前的路径点删除，剩余的作为全局路径
+	 * @return 返回的是局部地图裁剪并转化后的路径点
+	 */
   nav_msgs::msg::Path transformGlobalPlan(const geometry_msgs::msg::PoseStamped & pose);
 
+	// outpose到in_pose的tf转化
   bool transformPose(
     const std::shared_ptr<tf2_ros::Buffer> tf,
     const std::string frame,
@@ -62,9 +69,9 @@ protected:
   rclcpp::Logger logger_ {rclcpp::get_logger("PurePursuitController")};
   rclcpp::Clock::SharedPtr clock_;
 
-  double desired_linear_vel_;
-  double lookahead_dist_;
-  double max_angular_vel_;
+  double desired_linear_vel_; // 期望线速度
+  double lookahead_dist_; // 预瞄距离
+  double max_angular_vel_; // 最大角速度
   rclcpp::Duration transform_tolerance_ {0, 0};
 
   nav_msgs::msg::Path global_plan_;

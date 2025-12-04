@@ -127,13 +127,13 @@ geometry_msgs::msg::TwistStamped PurePursuitController::computeVelocityCommands(
 
   auto transformed_plan = transformGlobalPlan(pose);
 
-  // Find the first pose which is at a distance greater than the specified lookahed distance
+  // 寻找到距离当前位置大于预瞄距离的第一个点
   auto goal_pose_it = std::find_if(
     transformed_plan.poses.begin(), transformed_plan.poses.end(), [&](const auto & ps) {
       return hypot(ps.pose.position.x, ps.pose.position.y) >= lookahead_dist_;
     });
 
-  // If the last pose is still within lookahed distance, take the last pose
+  // 如果最后一个点与当前位置的距离都小于预瞄距离，那么就取最后一个点
   if (goal_pose_it == transformed_plan.poses.end()) {
     goal_pose_it = std::prev(transformed_plan.poses.end());
   }
@@ -141,9 +141,8 @@ geometry_msgs::msg::TwistStamped PurePursuitController::computeVelocityCommands(
 
   double linear_vel, angular_vel;
 
-  // If the goal pose is in front of the robot then compute the velocity using the pure pursuit
-  // algorithm, else rotate with the max angular velocity until the goal pose is in front of the
-  // robot
+	// 如果目标点在机器人前方，直接用纯跟踪算法计算速度。
+	// 如果在反方向，那么以最大角速度旋转，直到目标点在机器人前方
   if (goal_pose.position.x > 0) {
     auto curvature = 2.0 * goal_pose.position.y /
       (goal_pose.position.x * goal_pose.position.x + goal_pose.position.y * goal_pose.position.y);
@@ -154,7 +153,6 @@ geometry_msgs::msg::TwistStamped PurePursuitController::computeVelocityCommands(
     angular_vel = max_angular_vel_;
   }
 
-  // Create and publish a TwistStamped message with the desired velocity
   geometry_msgs::msg::TwistStamped cmd_vel;
   cmd_vel.header.frame_id = pose.header.frame_id;
   cmd_vel.header.stamp = clock_->now();
@@ -177,8 +175,6 @@ nav_msgs::msg::Path
 PurePursuitController::transformGlobalPlan(
   const geometry_msgs::msg::PoseStamped & pose)
 {
-  // Original mplementation taken fron nav2_dwb_controller
-
   if (global_plan_.poses.empty()) {
     throw nav2_core::PlannerException("Received plan with zero length");
   }
@@ -192,12 +188,12 @@ PurePursuitController::transformGlobalPlan(
     throw nav2_core::PlannerException("Unable to transform robot pose into global plan's frame");
   }
 
-  // We'll discard points on the plan that are outside the local costmap
+  // 用于后续丢弃局部地图之外的全局路径点，用于裁剪全局路径
   nav2_costmap_2d::Costmap2D * costmap = costmap_ros_->getCostmap();
   double dist_threshold = std::max(costmap->getSizeInCellsX(), costmap->getSizeInCellsY()) *
     costmap->getResolution() / 2.0;
 
-  // First find the closest pose on the path to the robot
+  // 寻找路径上距离机器人最近的点
   auto transformation_begin =
     min_by(
     global_plan_.poses.begin(), global_plan_.poses.end(),
@@ -205,8 +201,8 @@ PurePursuitController::transformGlobalPlan(
       return euclidean_distance(robot_pose, ps);
     });
 
-  // From the closest point, look for the first point that's further then dist_threshold from the
-  // robot. These points are definitely outside of the costmap so we won't transform them.
+	// 从路径上寻找第一个与最近点的距离大于dist_threshold的点，
+	// 该点后面的点都超出了局部地图的范围，后续不做处理
   auto transformation_end = std::find_if(
     transformation_begin, end(global_plan_.poses),
     [&](const auto & global_plan_pose) {
@@ -255,8 +251,6 @@ bool PurePursuitController::transformPose(
   const rclcpp::Duration & transform_tolerance
 ) const
 {
-  // Implementation taken as is fron nav_2d_utils in nav2_dwb_controller
-
   if (in_pose.header.frame_id == frame) {
     out_pose = in_pose;
     return true;

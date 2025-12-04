@@ -1,0 +1,4 @@
+<!-- 修正：库名与 CMake 生成的库名保持一致（libbt_take_photo.so） -->
+<library path="libbt_take_photo.so">
+  <class type="TakePhoto" base_class_type="BT::ActionNodeBase"/>
+</library>

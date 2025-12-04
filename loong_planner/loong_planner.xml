@@ -1,0 +1,9 @@
+<class_libraries>
+    <library path="loong_planner">
+        <class type="loong_planner::LoongPlanner" base_class_type="nav2_core::Controller">
+            <description>
+                LoongPlanner plugin for Navigation2
+            </description>
+        </class>
+    </library>
+</class_libraries>

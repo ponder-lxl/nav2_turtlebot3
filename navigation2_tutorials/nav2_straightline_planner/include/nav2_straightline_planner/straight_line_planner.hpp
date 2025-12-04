@@ -57,6 +57,9 @@
 namespace nav2_straightline_planner
 {
 
+/**
+ * @brief 实现的是起始点到目标点的直线规划，不考虑障碍物，一条直线走到底
+ */
 class StraightLine : public nav2_core::GlobalPlanner
 {
 public:

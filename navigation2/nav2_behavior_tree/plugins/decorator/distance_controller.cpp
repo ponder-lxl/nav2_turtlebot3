@@ -46,10 +46,12 @@ DistanceController::DistanceController(
   tf_ = config().blackboard->get<std::shared_ptr<tf2_ros::Buffer>>("tf_buffer");
 
   node_->get_parameter("transform_tolerance", transform_tolerance_);
+  std::cout << "------Distance Controller------" << std::endl;
 }
 
 inline BT::NodeStatus DistanceController::tick()
 {
+  std::cout << "------Distance Controller------" << std::endl;
   if (status() == BT::NodeStatus::IDLE) {
     // Reset the starting position since we're starting a new iteration of
     // the distance controller (moving from IDLE to RUNNING)

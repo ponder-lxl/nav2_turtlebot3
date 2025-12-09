@@ -200,6 +200,13 @@
       <input_port name="server_timeout">Server timeout</input_port>
     </Action>
 
+    <Action ID="TakePhoto">
+      <input_port name="image_topic">Camera image topic to subscribe</input_port>
+      <input_port name="save_dir">Directory to save photos</input_port>
+      <input_port name="image_format">Image format (png, jpg, etc.)</input_port>
+      <input_port name="filename_prefix">Prefix for saved image filename</input_port>
+    </Action>
+
     <!-- ############################### CONDITION NODES ############################## -->
     <Condition ID="GoalReached">
         <input_port name="goal">Destination</input_port>

@@ -174,7 +174,9 @@ bool BtActionServer<ActionT>::on_cleanup()
 
 template<class ActionT>
 bool BtActionServer<ActionT>::loadBehaviorTree(const std::string & bt_xml_filename)
-{
+{ 
+  RCLCPP_INFO(logger_,
+        "  - bt_filename: %s", bt_xml_filename.c_str());
   // Empty filename is default for backward compatibility
   auto filename = bt_xml_filename.empty() ? default_bt_xml_filename_ : bt_xml_filename;
 
@@ -199,6 +201,15 @@ bool BtActionServer<ActionT>::loadBehaviorTree(const std::string & bt_xml_filena
   // Create the Behavior Tree from the XML input
   try {
     tree_ = bt_->createTreeFromText(xml_string, blackboard_);
+    // 打印行为树插件名字
+    RCLCPP_INFO(logger_, "Loaded BT nodes from XML:");
+    for (auto & node : tree_.nodes) {
+      RCLCPP_INFO(
+        logger_,
+        "  - NodeType: %s , NodeName: %s",
+        BT::toStr(node->type()).c_str(),
+        node->name().c_str());
+    }
     for (auto & blackboard : tree_.blackboard_stack) {
       blackboard->set<rclcpp::Node::SharedPtr>("node", client_node_);
       blackboard->set<std::chrono::milliseconds>("server_timeout", default_server_timeout_);

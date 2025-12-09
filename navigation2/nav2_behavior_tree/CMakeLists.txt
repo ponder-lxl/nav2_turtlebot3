@@ -17,6 +17,8 @@ find_package(tf2_geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(nav2_util REQUIRED)
+find_package(cv_bridge REQUIRED)
+find_package(OpenCV REQUIRED)
 
 nav2_package()
 
@@ -207,13 +209,21 @@ list(APPEND plugin_libs nav2_compute_and_track_route_bt_node)
 add_library(nav2_compute_route_bt_node SHARED plugins/action/compute_route_action.cpp)
 list(APPEND plugin_libs nav2_compute_route_bt_node)
 
+add_library(nav2_take_photo_action_bt_node SHARED plugins/action/take_photo_action.cpp)
+list(APPEND plugin_libs nav2_take_photo_action_bt_node)
+
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})
   target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)
 endforeach()
 
+ament_target_dependencies(nav2_take_photo_action_bt_node cv_bridge)
+target_link_libraries(nav2_take_photo_action_bt_node ${OpenCV_LIBS})
+target_compile_definitions(nav2_take_photo_action_bt_node PRIVATE BT_PLUGIN_EXPORT)
+
 install(TARGETS ${library_name}
                 ${plugin_libs}
+                nav2_take_photo_action_bt_node
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -239,6 +249,7 @@ ament_export_include_directories(
 ament_export_libraries(
   ${library_name}
   ${plugin_libs}
+  nav2_take_photo_action_bt_node
 )
 
 ament_export_dependencies(${dependencies})

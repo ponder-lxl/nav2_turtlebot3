@@ -14,6 +14,7 @@ find_package(cv_bridge REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(nav2_behavior_tree REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
+find_package(action_msgs REQUIRED)
 
 include_directories(
   include
@@ -52,9 +53,9 @@ install(TARGETS nav_photo_node
 )
 
 # Install BT plugin xml so nav2/behaviortree can find the custom node
-install(FILES bt_plugins.xml
-  DESTINATION share/${PROJECT_NAME}
-)
+# install(FILES bt_plugins.xml
+#   DESTINATION share/${PROJECT_NAME}
+# )
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

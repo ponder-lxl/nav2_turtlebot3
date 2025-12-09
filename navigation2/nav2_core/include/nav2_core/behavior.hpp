@@ -28,7 +28,7 @@ namespace nav2_core
 
 /**
  * @class Behavior
- * @brief Abstract interface for behaviors to adhere to with pluginlib
+ * @brief 行为抽象类，作为行为插件的接口
  */
 class Behavior
 {
@@ -41,10 +41,11 @@ public:
   virtual ~Behavior() {}
 
   /**
-   * @param  parent pointer to user's node
-   * @param  name The name of this planner
-   * @param  tf A pointer to a TF buffer
-   * @param  costmap_ros A pointer to the costmap
+   * @brief 参数初始化行为
+   * @param  parent 用户节点指针
+   * @param  name 规划器名称
+   * @param  tf tf缓冲指针
+   * @param  costmap_ros 代价地图指针
    */
   virtual void configure(
     const rclcpp_lifecycle::LifecycleNode::WeakPtr & parent,
@@ -52,17 +53,17 @@ public:
     std::shared_ptr<nav2_costmap_2d::CostmapTopicCollisionChecker> collision_checker) = 0;
 
   /**
-   * @brief Method to cleanup resources used on shutdown.
+   * @brief 在关闭时清理行为使用的任何资源
    */
   virtual void cleanup() = 0;
 
   /**
-   * @brief Method to active Behavior and any threads involved in execution.
+   * @brief 激活行为及其执行的任何线程
    */
   virtual void activate() = 0;
 
   /**
-   * @brief Method to deactive Behavior and any threads involved in execution.
+   * @brief 停用行为及其执行的任何线程
    */
   virtual void deactivate() = 0;
 };

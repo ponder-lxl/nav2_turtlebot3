@@ -33,18 +33,18 @@ namespace nav2_core
 
 /**
  * @class Smoother
- * @brief smoother interface that acts as a virtual base class for all smoother plugins
+ * @brief 路径平滑抽象类
  */
 class Smoother
 {
 public:
   using Ptr = std::shared_ptr<nav2_core::Smoother>;
 
-  /**
-   * @brief Virtual destructor
-   */
   virtual ~Smoother() {}
 
+  /**
+   * @brief 参数配置
+   */
   virtual void configure(
     const rclcpp_lifecycle::LifecycleNode::WeakPtr &,
     std::string name, std::shared_ptr<tf2_ros::Buffer>,
@@ -52,26 +52,26 @@ public:
     std::shared_ptr<nav2_costmap_2d::FootprintSubscriber>) = 0;
 
   /**
-   * @brief Method to cleanup resources.
+   * @brief 清理平滑器使用的资源
    */
   virtual void cleanup() = 0;
 
   /**
-   * @brief Method to activate smoother and any threads involved in execution.
+   * @brief 激活平滑器及其执行的任何线程
    */
   virtual void activate() = 0;
 
   /**
-   * @brief Method to deactivate smoother and any threads involved in execution.
+   * @brief 停止平滑器及其执行的任何线程
    */
   virtual void deactivate() = 0;
 
   /**
-   * @brief Method to smooth given path
+   * @brief 在指定的最大时间范围内平滑给定的路径
    *
-   * @param path In-out path to be smoothed
-   * @param max_time Maximum duration smoothing should take
-   * @return If smoothing was completed (true) or interrupted by time limit (false)
+   * @param path 被平滑的路径，原始路径
+   * @param max_time 平滑最大使用时间
+   * @return 返回bool值，表示平滑是否完成或因时间限制而中断
    */
   virtual bool smooth(
     nav_msgs::msg::Path & path,

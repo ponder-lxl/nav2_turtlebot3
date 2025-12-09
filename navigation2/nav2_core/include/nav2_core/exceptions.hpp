@@ -43,12 +43,16 @@
 namespace nav2_core
 {
 
+/**
+ * @class PlannerException
+ * @brief 规划器异常类
+ */
 class PlannerException : public std::runtime_error
 {
 public:
   explicit PlannerException(const std::string description)
   : std::runtime_error(description) {}
-  using Ptr = std::shared_ptr<PlannerException>;
+  using Ptr = std::shared_ptr<PlannerException>; // 定义类型别名ptr，类型为指向PlannerException的shared_ptr
 };
 
 }  // namespace nav2_core

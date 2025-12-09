@@ -26,27 +26,18 @@
 namespace nav2_core
 {
 /**
- * @brief Base class for creating a plugin in order to perform a specific task at waypoint arrivals.
+ * @brief 用于创建插件以在达到指定路径点时执行特定任务的抽象基类
  *
  */
 class WaypointTaskExecutor
 {
 public:
-  /**
-   * @brief Construct a new Simple Task Execution At Waypoint Base object
-   *
-   */
   WaypointTaskExecutor() {}
 
-  /**
-   * @brief Destroy the Simple Task Execution At Waypoint Base object
-   *
-   */
   virtual ~WaypointTaskExecutor() {}
 
   /**
-   * @brief Override this to setup your pub, sub or any ros services that you will use in the plugin.
-   *
+   * @brief 初始化
    * @param parent parent node that plugin will be created within(for an example see nav_waypoint_follower)
    * @param plugin_name plugin name comes from parameters in yaml file
    */
@@ -55,12 +46,10 @@ public:
     const std::string & plugin_name) = 0;
 
   /**
-   * @brief Override this to define the body of your task that you would like to execute once the robot arrived to waypoint
-   *
-   * @param curr_pose current pose of the robot
-   * @param curr_waypoint_index current waypoint, that robot just arrived
-   * @return true if task execution was successful
-   * @return false if task execution failed
+   * @brief 定义在到达指定点时执行任务的具体实现
+   * @param curr_pose 当前机器人位置
+   * @param curr_waypoint_index 当前指定点的索引
+   * @return true表示任务执行成功
    */
   virtual bool processAtWaypoint(
     const geometry_msgs::msg::PoseStamped & curr_pose, const int & curr_waypoint_index) = 0;

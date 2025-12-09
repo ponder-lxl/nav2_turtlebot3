@@ -27,9 +27,7 @@ namespace nav2_core
 {
 /**
  * @class nav2_core::ProgressChecker
- * @brief This class defines the plugin interface used to check the
- * position of the robot to make sure that it is actually progressing
- * towards a goal.
+ * @brief 机器人到目标点过程检测类
  */
 class ProgressChecker
 {
@@ -39,21 +37,21 @@ public:
   virtual ~ProgressChecker() {}
 
   /**
-   * @brief Initialize parameters for ProgressChecker
-   * @param parent Node pointer
+   * @brief 参数初始化
+   * @param parent 生命周期节点指针
+   * @param plugin_name 插件名称
    */
   virtual void initialize(
     const rclcpp_lifecycle::LifecycleNode::WeakPtr & parent,
     const std::string & plugin_name) = 0;
   /**
-   * @brief Checks if the robot has moved compare to previous
-   * pose
-   * @param current_pose Current pose of the robot
-   * @return True if progress is made
+   * @brief 过程状态检测
+   * @param current_pose 机器人当前位置
+   * @return 有进展返回true
    */
   virtual bool check(geometry_msgs::msg::PoseStamped & current_pose) = 0;
   /**
-   * @brief Reset class state upon calling
+   * @brief 参数重置
    */
   virtual void reset() = 0;
 };

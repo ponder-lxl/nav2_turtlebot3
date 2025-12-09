@@ -55,7 +55,7 @@ namespace nav2_core
 
 /**
  * @class Controller
- * @brief controller interface that acts as a virtual base class for all controller plugins
+ * @brief 导航控制器抽象类，作为导航控制器的接口
  */
 class Controller
 {
@@ -69,8 +69,7 @@ public:
   virtual ~Controller() {}
 
   /**
-   * @param  parent pointer to user's node
-   * @param  costmap_ros A pointer to the costmap
+   * @brief 参数初始化
    */
   virtual void configure(
     const rclcpp_lifecycle::LifecycleNode::WeakPtr &,
@@ -78,38 +77,32 @@ public:
     std::shared_ptr<nav2_costmap_2d::Costmap2DROS>) = 0;
 
   /**
-   * @brief Method to cleanup resources.
+   * @brief 清理控制器使用的资源
    */
   virtual void cleanup() = 0;
 
   /**
-   * @brief Method to active planner and any threads involved in execution.
+   * @brief 激活控制器及其执行的任何线程
    */
   virtual void activate() = 0;
 
   /**
-   * @brief Method to deactive planner and any threads involved in execution.
+   * @brief 停止控制器及其执行的任何线程
    */
   virtual void deactivate() = 0;
 
   /**
-   * @brief local setPlan - Sets the global plan
-   * @param path The global plan
+   * @brief 为控制器设置全局路径
+   * @param path 全局路径
    */
   virtual void setPlan(const nav_msgs::msg::Path & path) = 0;
 
   /**
-   * @brief Controller computeVelocityCommands - calculates the best command given the current pose and velocity
-   *
-   * It is presumed that the global plan is already set.
-   *
-   * This is mostly a wrapper for the protected computeVelocityCommands
-   * function which has additional debugging info.
-   *
-   * @param pose Current robot pose
-   * @param velocity Current robot velocity
-   * @param goal_checker Pointer to the current goal checker the task is utilizing
-   * @return The best command for the robot to drive
+   * @brief 根据当前位置和速度计算最佳控制指令
+   * @param pose 当前位置
+   * @param velocity 当前机器人的速度
+   * @param goal_checker 正在使用的目标检查器指针
+   * @return 最佳控制指令
    */
   virtual geometry_msgs::msg::TwistStamped computeVelocityCommands(
     const geometry_msgs::msg::PoseStamped & pose,
@@ -117,11 +110,9 @@ public:
     nav2_core::GoalChecker * goal_checker) = 0;
 
   /**
-   * @brief Limits the maximum linear speed of the robot.
-   * @param speed_limit expressed in absolute value (in m/s)
-   * or in percentage from maximum robot speed.
-   * @param percentage Setting speed limit in percentage if true
-   * or in absolute values in false case.
+   * @brief 根据提供的速度限制和是否以绝对值或百分比形式表示，限制机器人的最大线速度
+   * @param speed_limit 体现为绝对值的速度限制，或者百分比的速度限制
+   * @param percentage true：使用速度限制百分比，false：使用绝对值限制
    */
   virtual void setSpeedLimit(const double & speed_limit, const bool & percentage) = 0;
 };

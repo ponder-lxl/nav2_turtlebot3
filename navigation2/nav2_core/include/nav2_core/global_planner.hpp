@@ -29,7 +29,7 @@ namespace nav2_core
 
 /**
  * @class GlobalPlanner
- * @brief Abstract interface for global planners to adhere to with pluginlib
+ * @brief 全局规划抽象类，用于插件式的全局规划器
  */
 class GlobalPlanner
 {
@@ -42,10 +42,11 @@ public:
   virtual ~GlobalPlanner() {}
 
   /**
-   * @param  parent pointer to user's node
-   * @param  name The name of this planner
-   * @param  tf A pointer to a TF buffer
-   * @param  costmap_ros A pointer to the costmap
+   * @brief 初始化规划器
+   * @param  parent 用户节点指针
+   * @param  name 规划器名称
+   * @param  tf tf缓冲指针
+   * @param  costmap_ros 代价地图指针
    */
   virtual void configure(
     const rclcpp_lifecycle::LifecycleNode::WeakPtr & parent,
@@ -53,25 +54,25 @@ public:
     std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros) = 0;
 
   /**
-   * @brief Method to cleanup resources used on shutdown.
+   * @brief 用于规划器关闭时清理规划器使用的任何资源
    */
   virtual void cleanup() = 0;
 
   /**
-   * @brief Method to active planner and any threads involved in execution.
+   * @brief 激活规划器及其执行的任何线程
    */
   virtual void activate() = 0;
 
   /**
-   * @brief Method to deactive planner and any threads involved in execution.
+   * @brief 停用规划器及其执行的任何线程
    */
   virtual void deactivate() = 0;
 
   /**
-   * @brief Method create the plan from a starting and ending goal.
-   * @param start The starting pose of the robot
-   * @param goal  The goal pose of the robot
-   * @return      The sequence of poses to get from start to goal, if any
+   * @brief 从起始姿态创建一个到目标姿态的规划方案
+   * @param start 起始位置
+   * @param goal  目标位置
+   * @return      全局路径
    */
   virtual nav_msgs::msg::Path createPlan(
     const geometry_msgs::msg::PoseStamped & start,

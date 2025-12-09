@@ -51,51 +51,45 @@ namespace nav2_core
 
 /**
  * @class GoalChecker
- * @brief Function-object for checking whether a goal has been reached
- *
- * This class defines the plugin interface for determining whether you have reached
- * the goal state. This primarily consists of checking the relative positions of two poses
- * (which are presumed to be in the same frame). It can also check the velocity, as some
- * applications require that robot be stopped to be considered as having reached the goal.
+ * @brief 检测机器人是否到达目标
  */
 class GoalChecker
 {
 public:
-  typedef std::shared_ptr<nav2_core::GoalChecker> Ptr;
+  typedef std::shared_ptr<nav2_core::GoalChecker> Ptr;  // 定义类型别名ptr，类型为指向GoalChecker的shared_ptr
 
   virtual ~GoalChecker() {}
 
   /**
-   * @brief Initialize any parameters from the NodeHandle
-   * @param parent Node pointer for grabbing parameters
+   * @brief 用于从Nodehandle初始化任何参数
+   * @param parent 用于获取参数的节点指针
+   * @param plugin_name 插件名称 
+   * @param costmap_ros 代价地图
    */
   virtual void initialize(
     const rclcpp_lifecycle::LifecycleNode::WeakPtr & parent,
     const std::string & plugin_name,
     const std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros) = 0;
-
+  
+  // 重置GoalChecker对象的状态
   virtual void reset() = 0;
 
   /**
-   * @brief Check whether the goal should be considered reached
-   * @param query_pose The pose to check
-   * @param goal_pose The pose to check against
-   * @param velocity The robot's current velocity
-   * @return True if goal is reached
+   * @brief 检查是否到达目标
+   * @param query_pose 查询姿态
+   * @param goal_pose 目标姿态
+   * @param velocity 机器人当前速度
+   * @return 返回是否达到
    */
   virtual bool isGoalReached(
     const geometry_msgs::msg::Pose & query_pose, const geometry_msgs::msg::Pose & goal_pose,
     const geometry_msgs::msg::Twist & velocity) = 0;
 
   /**
-   * @brief Get the maximum possible tolerances used for goal checking in the major types.
-   * Any field without a valid entry is replaced with std::numeric_limits<double>::lowest()
-   * to indicate that it is not measured. For tolerance across multiple entries
-   * (e.x. XY tolerances), both fields will contain this value since it is the maximum tolerance
-   * that each independent field could be assuming the other has no error (e.x. X and Y).
-   * @param pose_tolerance The tolerance used for checking in Pose fields
-   * @param vel_tolerance The tolerance used for checking velocity fields
-   * @return True if the tolerances are valid to use
+   * @brief 获取用于目标检查的主要类型的最大可能公差
+   * @param pose_tolerance 位置容差
+   * @param vel_tolerance 速度容差
+   * @return ture, 表示容差被合理使用
    */
   virtual bool getTolerances(
     geometry_msgs::msg::Pose & pose_tolerance,
